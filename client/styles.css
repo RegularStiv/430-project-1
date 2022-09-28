@@ -5,6 +5,9 @@
     border-radius: 50%;
     background-color: white;
 }
+.redTile {
+    background-color: red!important;
+}
 #gameBoard{
     height: 600px;
     width: 700px;

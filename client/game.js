@@ -27,13 +27,25 @@ function setTile(){
     coordString = coordString.split('-');
     let row = parseInt(coordString[0]);
     let col = parseInt(coordString[1]);
-    gameArray[row[col]] = 1;
+    for(let i = 0; i < gameArray[row].length - 1; i++){
+        if(!gameArray[i + 1]){
+            gameArray[i][col] = 1;
+        } else if(gameArray[i + 1][col]){
+            if(gameArray[i + 1][col] !== 0){
+            gameArray[i][col] = 1;
+            }   
+        }
+    }
+    drawTiles();
+}
+function drawTiles(){
     for(let i = 0; i < gameArray.length; i++){
         for(let j = 0; j < gameArray[i].length; j++){
-            if(gameArray[i[j]] == 1){
-                console.log(this.id + "1");
+            if(gameArray[i][j] === 1){
+                let tile = document.getElementById(`${i}-${j}`);
+                tile.classList.add('redTile');
             }
-        }   
+        }
     }
 }
 window.onload = init;
