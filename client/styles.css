@@ -8,6 +8,9 @@
 .redTile {
     background-color: red!important;
 }
+.yellowTile {
+    background-color: yellow!important;
+}
 #gameBoard{
     height: 600px;
     width: 700px;
