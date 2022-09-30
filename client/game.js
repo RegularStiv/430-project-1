@@ -6,7 +6,9 @@ function init() {
 }
 
 function resetGame(){
+    gameArray = [];
     for(let i = 0; i < 6; i++){
+        
         let rows = []
         for (let j = 0; j < 7; j++){
             rows.push(0);
@@ -67,6 +69,10 @@ function drawTiles(){
             } else if(gameArray[i][j] === 2){
                 let tile = document.getElementById(`${i}-${j}`);
                 tile.classList.add('yellowTile');
+            } else if(gameArray[i][j] === 0 && document.getElementById(`${i}-${j}`).classList.contains('yellowTile')){
+                document.getElementById(`${i}-${j}`).classList.remove('yellowTile');
+            }else if(gameArray[i][j] === 0 && document.getElementById(`${i}-${j}`).classList.contains('redTile')){
+                document.getElementById(`${i}-${j}`).classList.remove('redTile');
             }
         }
     }
@@ -83,6 +89,8 @@ function checkWin(){
                     && gameArray[i][j] === gameArray[i][j + 2] 
                     && gameArray[i][j] === gameArray[i][j + 3]){
                     console.log('horizaontal wins');
+                    resetGame();
+                    drawTiles();
                     return;
                 }
             }
@@ -94,6 +102,8 @@ function checkWin(){
                     && gameArray[i][j] === gameArray[i + 2][j] 
                     && gameArray[i][j] === gameArray[i + 3][j]){
                     console.log('vertical wins');
+                    resetGame();
+                    drawTiles();
                     return;
                 }
             }
@@ -105,6 +115,8 @@ function checkWin(){
                     && gameArray[i][j] === gameArray[i - 2][j + 2] 
                     && gameArray[i][j] === gameArray[i - 3][j + 3]){
                     console.log('diagonal wins');
+                    resetGame();
+                    drawTiles();
                     return;
                 }
             }
@@ -116,6 +128,8 @@ function checkWin(){
                     && gameArray[i][j] === gameArray[i - 2][j - 2] 
                     && gameArray[i][j] === gameArray[i - 3][j - 3]){
                     console.log('diagonal wins');
+                    resetGame();
+                    drawTiles();
                     return;
                 }
             }
