@@ -70,5 +70,57 @@ function drawTiles(){
             }
         }
     }
+    checkWin();
+}
+
+function checkWin(){
+    for(let i = 0; i < gameArray.length; i++){
+        for(let j = 0; j < gameArray[i].length; j++){
+            //horizontal
+            if(gameArray[i][j + 3]){
+                if(gameArray[i][j] != 0 
+                    && gameArray[i][j] === gameArray[i][j + 1]
+                    && gameArray[i][j] === gameArray[i][j + 2] 
+                    && gameArray[i][j] === gameArray[i][j + 3]){
+                    console.log('horizaontal wins');
+                    return;
+                }
+            }
+            
+            //vertical
+            if(gameArray[i + 3] && gameArray[i + 3][j]){
+                if(gameArray[i][j] != 0 
+                    && gameArray[i][j] === gameArray[i + 1][j]
+                    && gameArray[i][j] === gameArray[i + 2][j] 
+                    && gameArray[i][j] === gameArray[i + 3][j]){
+                    console.log('vertical wins');
+                    return;
+                }
+            }
+
+            //diagonal up right
+            if(gameArray[i - 3] && gameArray[i - 3][j + 3]){
+                if(gameArray[i][j] != 0 
+                    && gameArray[i][j] === gameArray[i - 1][j + 1]
+                    && gameArray[i][j] === gameArray[i - 2][j + 2] 
+                    && gameArray[i][j] === gameArray[i - 3][j + 3]){
+                    console.log('diagonal wins');
+                    return;
+                }
+            }
+
+            //diagonal up left
+            if(gameArray[i - 3] && gameArray[i - 3][j - 3]){
+                if(gameArray[i][j] != 0 
+                    && gameArray[i][j] === gameArray[i - 1][j - 1]
+                    && gameArray[i][j] === gameArray[i - 2][j - 2] 
+                    && gameArray[i][j] === gameArray[i - 3][j - 3]){
+                    console.log('diagonal wins');
+                    return;
+                }
+            }
+        }
+    }
+    
 }
 window.onload = init;
