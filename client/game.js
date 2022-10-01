@@ -1,18 +1,18 @@
 let board = document.querySelector("#gameBoard");
 let gameArray = [];
 let redPlayer = true;
+let gameInProgress = false;
 function init() {
     resetGame();
 }
 
 function resetGame(){
     gameArray = [];
+    gameInProgress = false;
     for(let i = 0; i < 6; i++){
-        
         let rows = []
         for (let j = 0; j < 7; j++){
             rows.push(0);
-
             let tile = document.createElement("div");
             tile.id = `${i.toString()}-${j.toString()}`
             tile.classList = "tile";
@@ -21,7 +21,6 @@ function resetGame(){
         }
         gameArray.push(rows);
     }
-    console.log(gameArray);
 }
 
 function setTile(){
@@ -31,7 +30,7 @@ function setTile(){
     let col = parseInt(coordString[1]);
     for(let i = 0; i < gameArray[row].length - 1; i++){
         //if at the bottom of the column
-        if(!gameArray[i + 1]){
+        if(!gameArray[i + 1] && gameArray[i][col] === 0){
             if(redPlayer){
                 gameArray[i][col] = 1;
             }else if(!redPlayer){
@@ -41,8 +40,8 @@ function setTile(){
             drawTiles();
         } 
         //if there is a item underneith 
-        else if(gameArray[i + 1][col]){
-            if(gameArray[i + 1][col] !== 0){
+        else if(gameArray[i + 1][col] ){
+            if(gameArray[i + 1][col] !== 0 && gameArray[i][col] === 0){
                 if(redPlayer){
                     gameArray[i][col] = 1;
                     redPlayer = !redPlayer;
@@ -135,6 +134,93 @@ function checkWin(){
             }
         }
     }
-    
+    if(redPlayer){
+        document.querySelector("#content").innerHTML = `<p>Red Player's Turn</p>`;
+    }
+    if(!redPlayer){
+        document.querySelector("#content").innerHTML = `<p>Yellow Player's Turn</p>`;
+    }
 }
+
+//#region posting and geeting
+
+const handleResponse = async (response, parseResponse) => {
+       
+    //Grab the content section
+    const content = document.querySelector('#content');
+
+    //Based on the status code, display something
+    switch(response.status) {
+      case 200: //success
+        content.innerHTML = `<b>Success</b>`;
+        break;
+      case 201: //created
+        content.innerHTML = '<b>Created</b>';
+        break;
+      case 204: //updated (no response back from server)
+        content.innerHTML = '<b>Updated (No Content)</b>';
+        return;
+      case 400: //bad request
+        content.innerHTML = `<b>Bad Request</b>`;
+        break;
+        case 404: //bad request
+        content.innerHTML = `<b>Not Found</b>`;
+        break;
+      default: //any other status code
+        content.innerHTML = `Error code not implemented by client.`;
+        break;
+    }
+
+    //Parse the response to json. This works because we know the server always
+    //sends back json. Await because .json() is an async function.
+    
+    if(parseResponse !== 'head'){
+     let obj = await response.json();
+     if(obj.array){
+     let jsonString = JSON.stringify(obj.array);
+     content.innerHTML += `<p>${jsonString}</p>`;
+     }
+     if (obj.player){
+       let jsonString = JSON.stringify(obj.player);
+       content.innerHTML += `<p>${jsonString}</p>`;
+     }
+
+     //If we have a message, display it.
+     if(obj.message){
+      content.innerHTML += `<p>${obj.message}</p>`;
+    }
+}
+};
+const requestUpdate = async (userForm) => {
+      
+    //Grab the url and method from the html form below
+    const url = userForm.querySelector('#urlField').value;
+    const method = userForm.querySelector('#methodSelect').value;
+    
+    //Await our fetch response. Go to the URL, use the right method, and attach the headers.
+    let response = await fetch(url, {
+      method,
+      headers: {
+          'Accept': 'application/json'
+      },
+    });
+
+    //Once we have our response, send it into handle response. The second parameter is a boolean
+    //that says if we should parse the response or not. We will get a response to parse on get
+    //requests so we can do an inline boolean check, which will return a true or false to pass in.
+    handleResponse(response, method);
+  };
+const sendPost = async () => {
+    let response = await fetch(nameAction, {
+      method: nameMethod,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: gameArray,
+    });
+    //Once we have a response, handle it.
+    handleResponse(response);
+  };
+//#endregion
 window.onload = init;
