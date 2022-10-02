@@ -2,6 +2,7 @@ let board = document.querySelector("#gameBoard");
 let gameArray = [];
 let redPlayer = true;
 let gameInProgress = false;
+let firstGame = true;
 function init() {
     resetGame();
 }
@@ -13,14 +14,19 @@ function resetGame(){
         let rows = []
         for (let j = 0; j < 7; j++){
             rows.push(0);
-            let tile = document.createElement("div");
-            tile.id = `${i.toString()}-${j.toString()}`
-            tile.classList = "tile";
-            tile.onclick = setTile;
-            document.querySelector("#gameBoard").appendChild(tile);
+            if(firstGame){
+                let tile = document.createElement("div");
+                tile.id = `${i.toString()}-${j.toString()}`
+                tile.classList = "tile";
+                tile.onclick = setTile;
+                document.querySelector("#gameBoard").appendChild(tile);
+                
+            }
         }
+        
         gameArray.push(rows);
     }
+    firstGame = false;
 }
 
 function setTile(){
@@ -37,7 +43,9 @@ function setTile(){
                 gameArray[i][col] = 2;
             }
             redPlayer = !redPlayer;
+            sendPost();
             drawTiles();
+            
         } 
         //if there is a item underneith 
         else if(gameArray[i + 1][col] ){
@@ -45,11 +53,13 @@ function setTile(){
                 if(redPlayer){
                     gameArray[i][col] = 1;
                     redPlayer = !redPlayer;
+                    sendPost();
                     drawTiles();
                     return;
                 }else if(!redPlayer){
                     gameArray[i][col] = 2;
                     redPlayer = !redPlayer;
+                    sendPost();
                     drawTiles();
                     return;
                 }
@@ -89,7 +99,7 @@ function checkWin(){
                     && gameArray[i][j] === gameArray[i][j + 3]){
                     console.log('horizaontal wins');
                     resetGame();
-                    drawTiles();
+                    //drawTiles();
                     return;
                 }
             }
@@ -102,7 +112,7 @@ function checkWin(){
                     && gameArray[i][j] === gameArray[i + 3][j]){
                     console.log('vertical wins');
                     resetGame();
-                    drawTiles();
+                    //drawTiles();
                     return;
                 }
             }
@@ -115,7 +125,7 @@ function checkWin(){
                     && gameArray[i][j] === gameArray[i - 3][j + 3]){
                     console.log('diagonal wins');
                     resetGame();
-                    drawTiles();
+                    //drawTiles();
                     return;
                 }
             }
@@ -128,7 +138,7 @@ function checkWin(){
                     && gameArray[i][j] === gameArray[i - 3][j - 3]){
                     console.log('diagonal wins');
                     resetGame();
-                    drawTiles();
+                    //drawTiles();
                     return;
                 }
             }
@@ -140,6 +150,9 @@ function checkWin(){
     if(!redPlayer){
         document.querySelector("#content").innerHTML = `<p>Yellow Player's Turn</p>`;
     }
+    
+    //requestUpdate();
+    //drawTiles();
 }
 
 //#region posting and geeting
@@ -150,33 +163,33 @@ const handleResponse = async (response, parseResponse) => {
     const content = document.querySelector('#content');
 
     //Based on the status code, display something
-    switch(response.status) {
-      case 200: //success
-        content.innerHTML = `<b>Success</b>`;
-        break;
-      case 201: //created
-        content.innerHTML = '<b>Created</b>';
-        break;
-      case 204: //updated (no response back from server)
-        content.innerHTML = '<b>Updated (No Content)</b>';
-        return;
-      case 400: //bad request
-        content.innerHTML = `<b>Bad Request</b>`;
-        break;
-        case 404: //bad request
-        content.innerHTML = `<b>Not Found</b>`;
-        break;
-      default: //any other status code
-        content.innerHTML = `Error code not implemented by client.`;
-        break;
-    }
+    // switch(response.status) {
+    //   case 200: //success
+    //     content.innerHTML = `<b>Success</b>`;
+    //     break;
+    //   case 201: //created
+    //     content.innerHTML = '<b>Created</b>';
+    //     break;
+    //   case 204: //updated (no response back from server)
+    //     content.innerHTML = '<b>Updated (No Content)</b>';
+    //     return;
+    //   case 400: //bad request
+    //     content.innerHTML = `<b>Bad Request</b>`;
+    //     break;
+    //     case 404: //bad request
+    //     content.innerHTML = `<b>Not Found</b>`;
+    //     break;
+    //   default: //any other status code
+    //     content.innerHTML = `Error code not implemented by client.`;
+    //     break;
+    // }
 
     //Parse the response to json. This works because we know the server always
     //sends back json. Await because .json() is an async function.
     
-    if(parseResponse !== 'head'){
+    if(response.method === 'GET'){
      let obj = await response.json();
-     if(obj.array){
+     if(obj.body){
      let jsonString = JSON.stringify(obj.array);
      content.innerHTML += `<p>${jsonString}</p>`;
      }
@@ -191,15 +204,10 @@ const handleResponse = async (response, parseResponse) => {
     }
 }
 };
-const requestUpdate = async (userForm) => {
-      
-    //Grab the url and method from the html form below
-    const url = userForm.querySelector('#urlField').value;
-    const method = userForm.querySelector('#methodSelect').value;
-    
+const requestUpdate = async () => {
     //Await our fetch response. Go to the URL, use the right method, and attach the headers.
-    let response = await fetch(url, {
-      method,
+    let response = await fetch('/getBoard', {
+      method: 'GET',
       headers: {
           'Accept': 'application/json'
       },
@@ -208,17 +216,18 @@ const requestUpdate = async (userForm) => {
     //Once we have our response, send it into handle response. The second parameter is a boolean
     //that says if we should parse the response or not. We will get a response to parse on get
     //requests so we can do an inline boolean check, which will return a true or false to pass in.
-    handleResponse(response, method);
+    handleResponse(response);
   };
 const sendPost = async () => {
-    let response = await fetch(nameAction, {
-      method: nameMethod,
+    let response = await fetch('/changeBoard', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
       body: gameArray,
     });
+    console.log(response);
     //Once we have a response, handle it.
     handleResponse(response);
   };

@@ -11,6 +11,9 @@
 .yellowTile {
     background-color: yellow!important;
 }
+html{
+    background-color: darkgrey;
+}
 #gameBoard{
     height: 600px;
     width: 700px;

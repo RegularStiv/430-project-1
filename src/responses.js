@@ -21,9 +21,10 @@ const notFound = (request, response) => {
 
 const getBoard = (request, response) => {
   const responseJSON = {
-    gameArray,
+    message: "got GameBoard",
+    body: gameArray
   };
-  console.log(`getBoard Data = ${gameArray}`);
+  console.log(responseJSON);
   respondJSON(request, response, 200, responseJSON);
 };
 const getBoardMeta = (request, response) => respondJSONMeta(request, response, 200);
@@ -37,7 +38,7 @@ const changeBoard = (request, response, board) => {
   let responseCode = 204;
 
   // If the user doesn't exist yet
-  if (!gameArray[2]) {
+  if (gameArray === []) {
     // Set the status code to 201 and create an empty user
     responseCode = 201;
     gameArray = [];
@@ -45,13 +46,17 @@ const changeBoard = (request, response, board) => {
 
   // add or update fields for this user name
   gameArray = board;
-  console.log(`changeBoard Data = ${gameArray}`);
+  responseJSON.body = board;
+  console.log(responseJSON.message);
+  //console.log('changeBoard Data');
   // if response is created send created message
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
+
+    return respondJSON(request, response, responseCode, responseJSON);
+  }else if(responseCode === 204){
     return respondJSON(request, response, responseCode, responseJSON);
   }
-
   return respondJSONMeta(request, response, responseCode);
 };
 

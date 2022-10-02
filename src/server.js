@@ -17,6 +17,7 @@ const parseBody = (request, response, handler) => {
     response.statusCode = 400;
     response.end();
   });
+  console.log('wjehkj')
 
   request.on('data', (chunck) => {
     body.push(chunck);
@@ -39,13 +40,15 @@ const handleGet = (request, response, parsedUrl) => {
     responseHandler.notFound(request, response);
   } else if (parsedUrl.pathname === '/') {
     htmlHandler.getIndex(request, response);
+  } else if (parsedUrl.pathname === '/getJS') {
+    htmlHandler.getJS(request, response);
   } else {
     responseHandler.notFound(request, response);
   }
 };
 
 const handleMeta = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/getUsers') {
+  if (parsedUrl.pathname === '/getBoard') {
     responseHandler.getBoardMeta(request, response);
   } else if (parsedUrl.pathname === '/notReal') {
     responseHandler.notFoundMeta(request, response);
@@ -53,7 +56,7 @@ const handleMeta = (request, response, parsedUrl) => {
 };
 
 const handlePost = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/addUser') {
+  if (parsedUrl.pathname === '/changeBoard') {
     parseBody(request, response, responseHandler.changeBoard);
   }
 };
