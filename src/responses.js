@@ -24,7 +24,7 @@ const getBoard = (request, response) => {
     message: "got GameBoard",
     body: gameArray
   };
-  console.log(responseJSON);
+  //console.log(responseJSON);
   respondJSON(request, response, 200, responseJSON);
 };
 const getBoardMeta = (request, response) => respondJSONMeta(request, response, 200);
@@ -47,7 +47,7 @@ const changeBoard = (request, response, board) => {
   // add or update fields for this user name
   gameArray = board;
   responseJSON.body = board;
-  console.log(responseJSON.message);
+  console.log(responseJSON.body);
   //console.log('changeBoard Data');
   // if response is created send created message
   if (responseCode === 201) {
