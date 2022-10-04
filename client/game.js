@@ -48,7 +48,7 @@ function setTile(){
             
         } 
         //if there is a item underneith 
-        else if(gameArray[i + 1] && gameArray[i][col] === 0){
+        else if(gameArray[i + 1][col] ){
             if(gameArray[i + 1][col] !== 0 && gameArray[i][col] === 0){
                 if(redPlayer){
                     gameArray[i][col] = 1;

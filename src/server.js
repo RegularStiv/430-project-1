@@ -17,7 +17,7 @@ const parseBody = (request, response, handler) => {
     response.statusCode = 400;
     response.end();
   });
-  console.log('wjehkj');
+  console.log('wjehkj')
 
   request.on('data', (chunck) => {
     body.push(chunck);
