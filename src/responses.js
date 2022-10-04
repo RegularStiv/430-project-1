@@ -1,5 +1,4 @@
 let gameArray = [];
-let lobbyArray = [];
 
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
@@ -20,41 +19,22 @@ const notFound = (request, response) => {
   return respondJSON(request, response, 404, responseJSON);
 };
 
-const getBoard = (request, response, id) => {
-  let lobbyBoard = [];
-  for(let i = 0; i < lobbyArray.length;i++){
-    if(lobbyArray[i].id === id){
-      lobbyBoard = lobbyArray[i];
-    }
-  }
-  if(lobbyBoard === []){
-    console.log("no lobby");
-    return;
-  }
+const getBoard = (request, response) => {
   const responseJSON = {
-    message: 'got GameBoard',
-    body: lobbyBoard.gameArray,
+    message: "got GameBoard",
+    method: 'GET',
+    body: gameArray
   };
-  // console.log(responseJSON);
+  //console.log(responseJSON);
   respondJSON(request, response, 200, responseJSON);
 };
 const getBoardMeta = (request, response) => respondJSONMeta(request, response, 200);
-const changeBoard = (request, response, id) => {
+const changeBoard = (request, response, board) => {
   // default json message
-  let lobbyBoard = [];
-  for(let i = 0; i < lobbyArray.length;i++){
-    if(lobbyArray[i].id === id){
-      lobbyBoard = lobbyArray[i];
-    }
-  }
-  if(lobbyBoard === []){
-    console.log("no lobby");
-    return;
-  }
   const responseJSON = {
     message: 'Pushed the game board to the server',
   };
-
+  //console.log(board);
   // default status code to 204 updated
   let responseCode = 204;
 
@@ -62,24 +42,44 @@ const changeBoard = (request, response, id) => {
   if (gameArray === []) {
     // Set the status code to 201 and create an empty user
     responseCode = 201;
-    gameArray = [];
   }
 
   // add or update fields for this user name
+  console.log(board);
+    let boardArray = [];
+    //console.log(boardArray)
+    for(let i = 0; i < 6; i++){
+      let row = [];
+      for(let j = 0; j < 7; j++){
+        
+        if(!board[(i * 6) + j]){
+          row.push(0);
+          //console.log((i * 6) + j);
+        }else{
+          row.push(board[(i * 6) + j]);
+          //console.log(board[(i * 6) + j])
+        }
+        
+      }
+      //console.log(row);
+      boardArray.push(row);
+    }
+  board = boardArray
+
   gameArray = board;
   responseJSON.body = board;
   //console.log(responseJSON.body);
+  //console.log('changeBoard Data');
   // if response is created send created message
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
 
     return respondJSON(request, response, responseCode, responseJSON);
-  } if (responseCode === 204) {
+  }else if(responseCode === 204){
     return respondJSON(request, response, responseCode, responseJSON);
   }
   return respondJSONMeta(request, response, responseCode);
 };
-
 
 const notFoundMeta = (request, response) => {
   // return a 404 without an error message

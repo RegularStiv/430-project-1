@@ -4,6 +4,10 @@ let redPlayer = true;
 let gameInProgress = false;
 let firstGame = true;
 function init() {
+    setInterval(() => {
+        requestUpdate();
+        console.log("updated");
+    }, 5000);
     resetGame();
 }
 
@@ -27,6 +31,7 @@ function resetGame(){
         gameArray.push(rows);
     }
     firstGame = false;
+    sendPost();
 }
 
 function setTile(){
@@ -48,7 +53,7 @@ function setTile(){
             
         } 
         //if there is a item underneith 
-        else if(gameArray[i + 1] && gameArray[i][col] === 0){
+        else if(gameArray[i + 1][col] ){
             if(gameArray[i + 1][col] !== 0 && gameArray[i][col] === 0){
                 if(redPlayer){
                     gameArray[i][col] = 1;
@@ -156,9 +161,7 @@ function checkWin(){
 }
 
 //#region posting and geeting
-const createLobby = async (resposne) =>{
 
-};
 const handleResponse = async (response, parseResponse) => {
        
     //Grab the content section
@@ -189,11 +192,13 @@ const handleResponse = async (response, parseResponse) => {
     //Parse the response to json. This works because we know the server always
     //sends back json. Await because .json() is an async function.
     
-    if(response.method === 'GET'){
+    if(parseResponse === 'GET'){
      let obj = await response.json();
+     console.log(obj);
      if(obj.body){
-     let jsonString = JSON.stringify(obj.array);
-     content.innerHTML += `<p>${jsonString}</p>`;
+        //console.log(obj.body);
+        gameArray = obj.body;
+        drawTiles();
      }
      if (obj.player){
        let jsonString = JSON.stringify(obj.player);
@@ -214,11 +219,10 @@ const requestUpdate = async () => {
           'Accept': 'application/json'
       },
     });
-
     //Once we have our response, send it into handle response. The second parameter is a boolean
     //that says if we should parse the response or not. We will get a response to parse on get
     //requests so we can do an inline boolean check, which will return a true or false to pass in.
-    handleResponse(response);
+    handleResponse(response, 'GET');
   };
 const sendPost = async () => {
     let response = await fetch('/changeBoard', {
@@ -231,7 +235,7 @@ const sendPost = async () => {
     });
     console.log(response);
     //Once we have a response, handle it.
-    handleResponse(response);
+    handleResponse(response, 'POST');
   };
 //#endregion
 window.onload = init;
