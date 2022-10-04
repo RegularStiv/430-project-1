@@ -21,10 +21,10 @@ const notFound = (request, response) => {
 
 const getBoard = (request, response) => {
   const responseJSON = {
-    message: 'got GameBoard',
-    body: gameArray,
+    message: "got GameBoard",
+    body: gameArray
   };
-  // console.log(responseJSON);
+  //console.log(responseJSON);
   respondJSON(request, response, 200, responseJSON);
 };
 const getBoardMeta = (request, response) => respondJSONMeta(request, response, 200);
@@ -48,13 +48,13 @@ const changeBoard = (request, response, board) => {
   gameArray = board;
   responseJSON.body = board;
   console.log(responseJSON.body);
-  // console.log('changeBoard Data');
+  //console.log('changeBoard Data');
   // if response is created send created message
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
 
     return respondJSON(request, response, responseCode, responseJSON);
-  } if (responseCode === 204) {
+  }else if(responseCode === 204){
     return respondJSON(request, response, responseCode, responseJSON);
   }
   return respondJSONMeta(request, response, responseCode);
