@@ -156,9 +156,7 @@ function checkWin(){
 }
 
 //#region posting and geeting
-const createLobby = async (resposne) =>{
 
-};
 const handleResponse = async (response, parseResponse) => {
        
     //Grab the content section
