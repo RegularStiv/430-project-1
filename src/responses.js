@@ -1,5 +1,4 @@
 let gameArray = [];
-let lobbyArray = [];
 
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
@@ -20,37 +19,17 @@ const notFound = (request, response) => {
   return respondJSON(request, response, 404, responseJSON);
 };
 
-const getBoard = (request, response, id) => {
-  let lobbyBoard = [];
-  for(let i = 0; i < lobbyArray.length;i++){
-    if(lobbyArray[i].id === id){
-      lobbyBoard = lobbyArray[i];
-    }
-  }
-  if(lobbyBoard === []){
-    console.log("no lobby");
-    return;
-  }
+const getBoard = (request, response) => {
   const responseJSON = {
     message: 'got GameBoard',
-    body: lobbyBoard.gameArray,
+    body: gameArray,
   };
   // console.log(responseJSON);
   respondJSON(request, response, 200, responseJSON);
 };
 const getBoardMeta = (request, response) => respondJSONMeta(request, response, 200);
-const changeBoard = (request, response, id) => {
+const changeBoard = (request, response, board) => {
   // default json message
-  let lobbyBoard = [];
-  for(let i = 0; i < lobbyArray.length;i++){
-    if(lobbyArray[i].id === id){
-      lobbyBoard = lobbyArray[i];
-    }
-  }
-  if(lobbyBoard === []){
-    console.log("no lobby");
-    return;
-  }
   const responseJSON = {
     message: 'Pushed the game board to the server',
   };
@@ -68,7 +47,8 @@ const changeBoard = (request, response, id) => {
   // add or update fields for this user name
   gameArray = board;
   responseJSON.body = board;
-  //console.log(responseJSON.body);
+  console.log(responseJSON.body);
+  // console.log('changeBoard Data');
   // if response is created send created message
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -79,7 +59,6 @@ const changeBoard = (request, response, id) => {
   }
   return respondJSONMeta(request, response, responseCode);
 };
-
 
 const notFoundMeta = (request, response) => {
   // return a 404 without an error message
