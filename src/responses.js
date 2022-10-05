@@ -20,13 +20,13 @@ const notFound = (request, response) => {
 };
 
 const getBoard = (request, response) => {
-  //console.log(gameArray);
+  // console.log(gameArray);
   const responseJSON = {
-    message: "got GameBoard",
+    message: 'got GameBoard',
     method: 'GET',
-    body: gameArray
+    body: gameArray,
   };
-  //console.log(responseJSON);
+  // console.log(responseJSON);
   respondJSON(request, response, 200, responseJSON);
 };
 const getBoardMeta = (request, response) => respondJSONMeta(request, response, 200);
@@ -35,7 +35,7 @@ const changeBoard = (request, response, board) => {
   const responseJSON = {
     message: 'Pushed the game board to the server',
   };
-  //console.log(board);
+  // console.log(board);
   // default status code to 204 updated
   let responseCode = 204;
 
@@ -47,33 +47,32 @@ const changeBoard = (request, response, board) => {
 
   // add or update fields for this user name
   console.log(board);
-    let boardArray = [];
-    //console.log(boardArray)
-    for(let i = 0; i < 6; i++){
-      let row = [];
-      for(let j = 0; j < 7; j++){
-        console.log(board[i]);
-        if(board[(i * 6) + j] === 0){
-          row.push(0);
-        }else{
-          row.push(board[i]);
-        }
+  const boardArray = [];
+  // console.log(boardArray)
+  for (let i = 0; i < 6; i++) {
+    const row = [];
+    for (let j = 0; j < 7; j++) {
+      console.log(board[i]);
+      if (board[(i * 6) + j] === 0) {
+        row.push(0);
+      } else {
+        row.push(board[i]);
       }
-      //console.log(row);
-      boardArray.push(row);
     }
-  board = boardArray
+    // console.log(row);
+    boardArray.push(row);
+  }
 
-  gameArray = board;
-  responseJSON.body = board;
-  //console.log(responseJSON.body);
-  //console.log('changeBoard Data');
+  gameArray = boardArray;
+  responseJSON.body = boardArray;
+  // console.log(responseJSON.body);
+  // console.log('changeBoard Data');
   // if response is created send created message
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
 
     return respondJSON(request, response, responseCode, responseJSON);
-  }else if(responseCode === 204){
+  } if (responseCode === 204) {
     return respondJSON(request, response, responseCode, responseJSON);
   }
   return respondJSONMeta(request, response, responseCode);
