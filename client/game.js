@@ -24,10 +24,8 @@ function resetGame(){
                 tile.classList = "tile";
                 tile.onclick = setTile;
                 document.querySelector("#gameBoard").appendChild(tile);
-                
             }
         }
-        
         gameArray.push(rows);
     }
     firstGame = false;
@@ -53,7 +51,7 @@ function setTile(){
             
         } 
         //if there is a item underneith 
-        else if(gameArray[i + 1][col] ){
+        else if(gameArray[i + 1] ){
             if(gameArray[i + 1][col] !== 0 && gameArray[i][col] === 0){
                 if(redPlayer){
                     gameArray[i][col] = 1;
@@ -194,10 +192,19 @@ const handleResponse = async (response, parseResponse) => {
     
     if(parseResponse === 'GET'){
      let obj = await response.json();
-     console.log(obj);
+     obj = obj.split(',');
+     //console.log(obj);
+     gameArray = [];
      if(obj.body){
-        //console.log(obj.body);
-        gameArray = obj.body;
+        for (let i = 0; i < 6; i++) {
+            const row = [];
+            for (let j = 0; j < 7; j++) {
+              //console.log(board[i]);
+              row.push(obj[(i * 6) + j]);
+            }
+            // console.log(row);
+            gameArray.push(row);
+        }
         drawTiles();
      }
      if (obj.player){
@@ -225,15 +232,17 @@ const requestUpdate = async () => {
     handleResponse(response, 'GET');
   };
 const sendPost = async () => {
+    const sentArray = `gameArray=${gameArray}`;
+
     let response = await fetch('/changeBoard', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: gameArray,
+      body: sentArray,
     });
-    console.log(response);
+    //console.log(response);
     //Once we have a response, handle it.
     handleResponse(response, 'POST');
   };

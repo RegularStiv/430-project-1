@@ -20,7 +20,7 @@ const notFound = (request, response) => {
 };
 
 const getBoard = (request, response) => {
-  // console.log(gameArray);
+  console.log(gameArray);
   const responseJSON = {
     message: 'got GameBoard',
     method: 'GET',
@@ -35,38 +35,15 @@ const changeBoard = (request, response, board) => {
   const responseJSON = {
     message: 'Pushed the game board to the server',
   };
-  // console.log(board);
+  //console.log(board.gameArray);
   // default status code to 204 updated
   let responseCode = 204;
-
+  gameArray = board.gameArray;
   // If the user doesn't exist yet
   if (gameArray === []) {
     // Set the status code to 201 and create an empty user
     responseCode = 201;
   }
-
-  // add or update fields for this user name
-  console.log(board);
-  const boardArray = [];
-  // console.log(boardArray)
-  for (let i = 0; i < 6; i++) {
-    const row = [];
-    for (let j = 0; j < 7; j++) {
-      console.log(board[i]);
-      if (board[(i * 6) + j] === 0) {
-        row.push(0);
-      } else {
-        row.push(board[i]);
-      }
-    }
-    // console.log(row);
-    boardArray.push(row);
-  }
-
-  gameArray = boardArray;
-  responseJSON.body = boardArray;
-  // console.log(responseJSON.body);
-  // console.log('changeBoard Data');
   // if response is created send created message
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';

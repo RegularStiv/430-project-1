@@ -5,6 +5,9 @@
     border-radius: 50%;
     background-color: white;
 }
+html{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
 .redTile {
     background-color: red!important;
 }
