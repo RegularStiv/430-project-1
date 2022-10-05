@@ -20,6 +20,7 @@ const notFound = (request, response) => {
 };
 
 const getBoard = (request, response) => {
+  //console.log(gameArray);
   const responseJSON = {
     message: "got GameBoard",
     method: 'GET',
@@ -51,15 +52,12 @@ const changeBoard = (request, response, board) => {
     for(let i = 0; i < 6; i++){
       let row = [];
       for(let j = 0; j < 7; j++){
-        
-        if(!board[(i * 6) + j]){
+        console.log(board[i]);
+        if(board[(i * 6) + j] === 0){
           row.push(0);
-          //console.log((i * 6) + j);
         }else{
-          row.push(board[(i * 6) + j]);
-          //console.log(board[(i * 6) + j])
+          row.push(board[i]);
         }
-        
       }
       //console.log(row);
       boardArray.push(row);
