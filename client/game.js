@@ -192,15 +192,16 @@ const handleResponse = async (response, parseResponse) => {
     
     if(parseResponse === 'GET'){
      let obj = await response.json();
-     obj = obj.split(',');
-     //console.log(obj);
+
+
      gameArray = [];
      if(obj.body){
+        let tempArray = obj.body.split(',');
         for (let i = 0; i < 6; i++) {
             const row = [];
             for (let j = 0; j < 7; j++) {
               //console.log(board[i]);
-              row.push(obj[(i * 6) + j]);
+              row.push(parseInt(tempArray[(i * 7) + j]));
             }
             // console.log(row);
             gameArray.push(row);
@@ -241,6 +242,7 @@ const sendPost = async () => {
         'Accept': 'application/json',
       },
       body: sentArray,
+      player: `player=${redPlayer}`
     });
     //console.log(response);
     //Once we have a response, handle it.
