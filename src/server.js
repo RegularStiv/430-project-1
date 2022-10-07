@@ -25,17 +25,18 @@ const parseBody = (request, response, handler) => {
 
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
-    const bodyParams = query.parse(bodyString);
+    const bodyParams = JSON.parse(bodyString);
 
     handler(request, response, bodyParams);
   });
 };
 const handleGet = (request, response, parsedUrl) => {
   // route to correct method based on url
+  const params = query.parse(parsedUrl.query);
   if (parsedUrl.pathname === '/style.css') {
     htmlHandler.getCSS(request, response);
   } else if (parsedUrl.pathname === '/getBoard') {
-    responseHandler.getBoard(request, response);
+    responseHandler.getBoard(request, response, params);
   } else if (parsedUrl.pathname === '/notReal') {
     responseHandler.notFound(request, response);
   } else if (parsedUrl.pathname === '/') {

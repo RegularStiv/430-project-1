@@ -3,11 +3,13 @@ let gameArray = [];
 let redPlayer = true;
 let gameInProgress = false;
 let firstGame = true;
+let id = '';
 function init() {
     setInterval(() => {
         requestUpdate();
         console.log("updated");
     }, 5000);
+    document.querySelector("#buttonConnect").onclick = connectToGame;
     resetGame();
 }
 
@@ -31,7 +33,9 @@ function resetGame(){
     firstGame = false;
     sendPost();
 }
+function clearTiles(){
 
+}
 function setTile(){
     let coordString = this.id;
     coordString = coordString.split('-');
@@ -189,39 +193,30 @@ const handleResponse = async (response, parseResponse) => {
 
     //Parse the response to json. This works because we know the server always
     //sends back json. Await because .json() is an async function.
-    
+    if(parseResponse === 'POST'){
+        let obj  = await response.json();
+        id = obj.lobby.id;
+        document.querySelector("#id").textContent = `ID: ${id}`;
+    }
     if(parseResponse === 'GET'){
      let obj = await response.json();
-
-
-     gameArray = [];
+        console.log(obj);
      if(obj.body){
-        let tempArray = obj.body.split(',');
-        for (let i = 0; i < 6; i++) {
-            const row = [];
-            for (let j = 0; j < 7; j++) {
-              //console.log(board[i]);
-              row.push(parseInt(tempArray[(i * 7) + j]));
-            }
-            // console.log(row);
-            gameArray.push(row);
-        }
+        id = obj.body.id;
+        redPlayer = obj.body.redPlayer;
+        gameArray = obj.body.gameArray;
         drawTiles();
-     }
-     if (obj.player){
-       let jsonString = JSON.stringify(obj.player);
-       content.innerHTML += `<p>${jsonString}</p>`;
      }
 
      //If we have a message, display it.
      if(obj.message){
-      content.innerHTML += `<p>${obj.message}</p>`;
+      content.innerHTML = `<p>${obj.message}</p>`;
     }
 }
 };
 const requestUpdate = async () => {
     //Await our fetch response. Go to the URL, use the right method, and attach the headers.
-    let response = await fetch('/getBoard', {
+    let response = await fetch(`/getBoard?id=${id}`, {
       method: 'GET',
       headers: {
           'Accept': 'application/json'
@@ -233,20 +228,49 @@ const requestUpdate = async () => {
     handleResponse(response, 'GET');
   };
 const sendPost = async () => {
-    const sentArray = `gameArray=${gameArray}`;
-
+    const board = {
+        board: gameArray,
+        player: redPlayer,
+        id: id
+    }
+    
     let response = await fetch('/changeBoard', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: sentArray,
-      player: `player=${redPlayer}`
+      body: JSON.stringify(board)
     });
     //console.log(response);
     //Once we have a response, handle it.
     handleResponse(response, 'POST');
   };
+
+  const connectToGame = async () => {
+    if(id !== document.querySelector("#idText").value){
+    gameArray = [];
+    for(let i = 0; i < 6; i++){
+        let rows = []
+        for (let j = 0; j < 7; j++){
+            rows.push(0);
+        }
+        gameArray.push(rows);
+    }
+    drawTiles();
+    const tryID = document.querySelector("#idText").value;
+    //Await our fetch response. Go to the URL, use the right method, and attach the headers.
+    let response = await fetch(`/getBoard?id=${tryID}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        },
+      });
+      //Once we have our response, send it into handle response. The second parameter is a boolean
+      //that says if we should parse the response or not. We will get a response to parse on get
+      //requests so we can do an inline boolean check, which will return a true or false to pass in.
+      handleResponse(response, 'GET');
+  }
+}
 //#endregion
 window.onload = init;
