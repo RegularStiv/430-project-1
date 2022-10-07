@@ -9,7 +9,7 @@ function init() {
     setInterval(() => {
         requestUpdate();
         console.log("updated");
-    }, 5000);
+    }, 1000);
     document.querySelector("#buttonConnect").onclick = connectToGame;
     resetGame();
 }
@@ -33,9 +33,6 @@ function resetGame(){
     }
 
     sendPost();
-}
-function clearTiles(){
-
 }
 function setTile(){
     if(prevArray.toString() != gameArray.toString()){
