@@ -23,7 +23,13 @@ const getBoard = (request, response, params) => {
   const responseJSON = {
     message: 'Getting Board',
   };
-  if (!lobbies[params.id]) {
+  if(lobbies[params.id] == ''){
+    responseJSON.message = 'Missing ID';
+    responseJSON.id = 'missingParams';
+    // console.log(responseJSON);
+    return respondJSON(request, response, 400, responseJSON);
+  }
+  else if (!lobbies[params.id]) {
     responseJSON.message = 'Board not found';
     responseJSON.id = '';
     // console.log(responseJSON);
@@ -71,9 +77,8 @@ const changeBoard = (request, response, body) => {
   // if response is created send created message
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
-
     return respondJSON(request, response, responseCode, responseJSON);
-  } if (responseCode === 200) {
+  } else if (responseCode === 200) {
     return respondJSON(request, response, responseCode, responseJSON);
   }
   return respondJSONMeta(request, response, responseCode);

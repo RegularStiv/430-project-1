@@ -41,8 +41,10 @@ const handleGet = (request, response, parsedUrl) => {
     responseHandler.notFound(request, response);
   } else if (parsedUrl.pathname === '/') {
     htmlHandler.getIndex(request, response);
-  } else if (parsedUrl.pathname === '/getJS') {
-    htmlHandler.getJS(request, response);
+  } else if (parsedUrl.pathname === '/app') {
+    htmlHandler.getClient(request, response);
+  }else if (parsedUrl.pathname === '/getJS') {
+    htmlHandler.getJS(request, response, params);
   } else {
     responseHandler.notFound(request, response);
   }
