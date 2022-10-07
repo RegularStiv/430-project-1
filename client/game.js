@@ -1,5 +1,6 @@
 let board = document.querySelector("#gameBoard");
 let gameArray = [];
+let prevArray = [];
 let redPlayer = true;
 let gameInProgress = false;
 let firstGame = true;
@@ -30,13 +31,14 @@ function resetGame(){
         }
         gameArray.push(rows);
     }
-    firstGame = false;
+
     sendPost();
 }
 function clearTiles(){
 
 }
 function setTile(){
+    if(prevArray.toString() != gameArray.toString()){
     let coordString = this.id;
     coordString = coordString.split('-');
     let row = parseInt(coordString[0]);
@@ -73,6 +75,7 @@ function setTile(){
             }   
         }
     }
+}
 }
 
 //drawing tiles on screen
@@ -170,27 +173,26 @@ const handleResponse = async (response, parseResponse) => {
     const content = document.querySelector('#content');
 
     //Based on the status code, display something
-    // switch(response.status) {
-    //   case 200: //success
-    //     content.innerHTML = `<b>Success</b>`;
-    //     break;
-    //   case 201: //created
-    //     content.innerHTML = '<b>Created</b>';
-    //     break;
-    //   case 204: //updated (no response back from server)
-    //     content.innerHTML = '<b>Updated (No Content)</b>';
-    //     return;
-    //   case 400: //bad request
-    //     content.innerHTML = `<b>Bad Request</b>`;
-    //     break;
-    //     case 404: //bad request
-    //     content.innerHTML = `<b>Not Found</b>`;
-    //     break;
-    //   default: //any other status code
-    //     content.innerHTML = `Error code not implemented by client.`;
-    //     break;
-    // }
-
+     switch(response.status) {
+       case 200: //success
+         content.innerHTML = `<b>Success</b>`;
+         break;
+       case 201: //created
+         content.innerHTML = '<b>Created</b>';
+         break;
+       case 204: //updated (no response back from server)
+         content.innerHTML = '<b>Updated (No Content)</b>';
+         return;
+       case 400: //bad request
+         content.innerHTML = `<b>Bad Request</b>`;
+         break;
+         case 404: //bad request
+         content.innerHTML = `<b>Not Found</b>`;
+         break;
+       default: //any other status code
+         content.innerHTML = `Error code not implemented by client.`;
+         break;
+     }
     //Parse the response to json. This works because we know the server always
     //sends back json. Await because .json() is an async function.
     if(parseResponse === 'POST'){
@@ -200,11 +202,14 @@ const handleResponse = async (response, parseResponse) => {
     }
     if(parseResponse === 'GET'){
      let obj = await response.json();
-        console.log(obj);
+        //console.log(obj);
      if(obj.body){
         id = obj.body.id;
         redPlayer = obj.body.redPlayer;
-        gameArray = obj.body.gameArray;
+        if(obj.body.gameArray != gameArray){
+            gameArray = obj.body.gameArray;
+        }
+        
         drawTiles();
      }
 
@@ -228,6 +233,11 @@ const requestUpdate = async () => {
     handleResponse(response, 'GET');
   };
 const sendPost = async () => {
+    if(firstGame){
+        firstGame = false;
+    }else{
+        prevArray = gameArray;
+    }
     const board = {
         board: gameArray,
         player: redPlayer,
