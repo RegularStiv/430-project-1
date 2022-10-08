@@ -47,7 +47,7 @@ const handleGet = (request, response, parsedUrl) => {
     htmlHandler.getJS(request, response, params);
   } else if (parsedUrl.pathname === '/getIndexJS') {
     htmlHandler.getIndexJS(request, response);
-  }else {
+  } else {
     responseHandler.notFound(request, response);
   }
 };
