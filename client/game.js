@@ -2,17 +2,11 @@ let board = document.querySelector("#gameBoard");
 let gameArray = [];
 let prevArray = [];
 let redPlayer = true;
+let tryID = '';
 let gameInProgress = false;
 let firstGame = true;
 let id = '';
-function init() {
-    setInterval(() => {
-        requestUpdate();
-        console.log("updated");
-    }, 1000);
-    document.querySelector("#buttonConnect").onclick = connectToGame;
-    resetGame();
-}
+
 
 function resetGame(){
     gameArray = [];
@@ -202,12 +196,17 @@ const handleResponse = async (response, parseResponse) => {
         //console.log(obj);
      if(obj.body){
         id = obj.body.id;
+        document.querySelector("#id").textContent = `ID: ${id}`;
         redPlayer = obj.body.redPlayer;
         if(obj.body.gameArray != gameArray){
             gameArray = obj.body.gameArray;
         }
         
         drawTiles();
+     }else if(!obj.body && id===''){
+        resetGame();
+        prevArray = [];
+        content.innerHTML = `<p>No Board Found. Creating New Lobby.</p>`
      }
 
      //If we have a message, display it.
@@ -255,8 +254,11 @@ const sendPost = async () => {
   };
 
   const connectToGame = async () => {
-    if(id !== document.querySelector("#idText").value){
-    gameArray = [];
+    if(id !== document.querySelector("#idText").value || localStorage.getItem('id') !== null){
+    if(localStorage.getItem('id') !== null){
+        !localStorage.removeItem('id')
+    }
+        gameArray = [];
     for(let i = 0; i < 6; i++){
         let rows = []
         for (let j = 0; j < 7; j++){
@@ -265,7 +267,9 @@ const sendPost = async () => {
         gameArray.push(rows);
     }
     drawTiles();
-    const tryID = document.querySelector("#idText").value;
+    if(document.querySelector("#idText").value != ''){
+        tryID = document.querySelector("#idText").value;
+    }
     //Await our fetch response. Go to the URL, use the right method, and attach the headers.
     let response = await fetch(`/getBoard?id=${tryID}`, {
         method: 'GET',
@@ -278,6 +282,35 @@ const sendPost = async () => {
       //requests so we can do an inline boolean check, which will return a true or false to pass in.
       handleResponse(response, 'GET');
   }
+}
+
+function init() {
+    if(!localStorage.getItem('id')){
+        resetGame();
+    }else{
+        tryID = localStorage.getItem('id');
+        for(let i = 0; i < 6; i++){
+            let rows = []
+            for (let j = 0; j < 7; j++){
+                rows.push(0);
+                if(firstGame){
+                    let tile = document.createElement("div");
+                    tile.id = `${i.toString()}-${j.toString()}`
+                    tile.classList = "tile";
+                    tile.onclick = setTile;
+                    document.querySelector("#gameBoard").appendChild(tile);
+                }
+            }
+            gameArray.push(rows);
+        }
+        connectToGame();
+        firstGame = false;
+    }
+    setInterval(() => {
+        requestUpdate();
+        console.log("updated");
+    }, 1000);
+    document.querySelector("#buttonConnect").onclick = connectToGame;
 }
 //#endregion
 window.onload = init;

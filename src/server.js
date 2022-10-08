@@ -42,10 +42,12 @@ const handleGet = (request, response, parsedUrl) => {
   } else if (parsedUrl.pathname === '/') {
     htmlHandler.getIndex(request, response);
   } else if (parsedUrl.pathname === '/app') {
-    htmlHandler.getClient(request, response);
-  }else if (parsedUrl.pathname === '/getJS') {
+    htmlHandler.getGame(request, response);
+  } else if (parsedUrl.pathname === '/getJS') {
     htmlHandler.getJS(request, response, params);
-  } else {
+  } else if (parsedUrl.pathname === '/getIndexJS') {
+    htmlHandler.getIndexJS(request, response);
+  }else {
     responseHandler.notFound(request, response);
   }
 };

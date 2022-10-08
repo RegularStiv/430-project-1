@@ -24,7 +24,7 @@ const getCSS = (request, response) => {
   response.end();
 };
 // gets css to appear on screen
-const getJS = (request, response, params) => {
+const getJS = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/javascript' });
   response.write(js);
   response.end();
