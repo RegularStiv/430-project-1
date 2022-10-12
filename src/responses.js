@@ -1,3 +1,4 @@
+//default functions and lobby object
 const lobbies = {};
 
 const respondJSON = (request, response, status, object) => {
@@ -11,6 +12,7 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
+//not found return 404
 const notFound = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for was not found.',
@@ -19,32 +21,31 @@ const notFound = (request, response) => {
   return respondJSON(request, response, 404, responseJSON);
 };
 
+//get board 
 const getBoard = (request, response, params) => {
-  const responseJSON = {
-    message: 'Getting Board',
-  };
+  const responseJSON = { };
+  // check status of the board in the lobby and return the lobby or crash the board
   if (lobbies[params.id] === '') {
     responseJSON.message = 'Missing ID';
     responseJSON.id = 'missingParams';
-    // console.log(responseJSON);
     return respondJSON(request, response, 400, responseJSON);
   }
   if (!lobbies[params.id]) {
     responseJSON.message = 'Board not found';
     responseJSON.id = '';
-    // console.log(responseJSON);
     return respondJSON(request, response, 404, responseJSON);
   }
-
-  responseJSON.message = 'Got GameBoard';
   responseJSON.body = lobbies[params.id];
-  // console.log(responseJSON);
   return respondJSON(request, response, 200, responseJSON);
 };
-const getBoardMeta = (request, response) => respondJSONMeta(request, response, 200);
+const getBoardMeta = (request, response) => respondJSONMeta(request, response, 204);
+
+
 const changeBoard = (request, response, body) => {
+  //default data
   let responseCode = 200;
   let currentID = body.id;
+  //if a lobby doesnt exist create one 
   if (!lobbies[body.id] || body.id === '') {
     let unique = false;
     responseCode = 201;
@@ -68,10 +69,12 @@ const changeBoard = (request, response, body) => {
   const responseJSON = {
     message: 'Pushed the game board to the server',
   };
+  //set the lobby data
   lobbies[currentID].id = currentID;
   lobbies[currentID].gameArray = body.board;
   lobbies[currentID].redPlayer = body.player;
 
+  //send back the lobby
   responseJSON.lobby = lobbies[currentID];
 
   // if response is created send created message
@@ -81,14 +84,14 @@ const changeBoard = (request, response, body) => {
   } if (responseCode === 200) {
     return respondJSON(request, response, responseCode, responseJSON);
   }
-  return respondJSONMeta(request, response, responseCode);
+  return respondJSONMeta(request, response, responseCode, responseJSON);
 };
 
 const notFoundMeta = (request, response) => {
   // return a 404 without an error message
   respondJSONMeta(request, response, 404);
 };
-
+//export
 module.exports = {
   notFound,
   getBoard,

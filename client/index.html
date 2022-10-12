@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/style.css">
-    <script type = "module" src = "/getIndexJS"></script>
+    <script type="module" src="/getIndexJS"></script>
     <title>App</title>
 </head>
+
 <body>
-    <h1>Connect Four</h1>
-    <h2 id = "id">ID:</h2>
-    <button id="buttonCreate">create lobby</button>
-    <input id="idText"type = "text" maxlength="4" placeholder="Join a game with an ID">
-    <button id="buttonConnect">connect</button>
+    <h1 id="title">Connect Four</h1>
+    <div id="indexBody">
+        <p>Create A Lobby</p>
+        <button id="buttonCreate">Create Lobby!</button>
+        <p id="or">or</p>
+        <p>Join A Lobby</p>
+        <input id="idText" type="text" maxlength="4" placeholder="Insert ID">
+        <button id="buttonConnect">Connect!</button>
+    </div>
+
 </body>
+
 </html>

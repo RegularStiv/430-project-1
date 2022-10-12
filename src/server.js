@@ -1,3 +1,4 @@
+//set up variables
 const http = require('http');
 const url = require('url');
 const query = require('querystring');
@@ -17,7 +18,6 @@ const parseBody = (request, response, handler) => {
     response.statusCode = 400;
     response.end();
   });
-  // console.log('wjehkj');
 
   request.on('data', (chunck) => {
     body.push(chunck);
@@ -45,29 +45,31 @@ const handleGet = (request, response, parsedUrl) => {
     htmlHandler.getGame(request, response);
   } else if (parsedUrl.pathname === '/getJS') {
     htmlHandler.getJS(request, response, params);
+  }else if (parsedUrl.pathname === '/clientStyle.css') {
+    htmlHandler.getClientCSS(request, response);
   } else if (parsedUrl.pathname === '/getIndexJS') {
     htmlHandler.getIndexJS(request, response);
   } else {
     responseHandler.notFound(request, response);
   }
 };
-
+  // route to correct method based on url
 const handleMeta = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/getBoard') {
+  if (parsedUrl.pathname === '/getBoardMeta') {
     responseHandler.getBoardMeta(request, response);
-  } else if (parsedUrl.pathname === '/notReal') {
+  } else if (parsedUrl.pathname === '/notRealMeta') {
     responseHandler.notFoundMeta(request, response);
   }
 };
-
+  // route to correct method based on url
 const handlePost = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/changeBoard') {
     parseBody(request, response, responseHandler.changeBoard);
   }
 };
 const onRequest = (request, response) => {
-  const parsedUrl = url.parse(request.url);
 
+  const parsedUrl = url.parse(request.url);
   // checks different types of server commands
   if (request.method === 'POST') {
     handlePost(request, response, parsedUrl);
@@ -77,6 +79,7 @@ const onRequest = (request, response) => {
     handleMeta(request, response, parsedUrl);
   }
 };
+//creates the server
 http.createServer(onRequest).listen(port, () => {
   console.log(`Listening on 127.0.0.1: ${port}`);
 });

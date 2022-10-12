@@ -1,23 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/style.css">
-    <script type = "module" src = "/getJS"></script>
+    <link rel="stylesheet" type="text/css" href="/clientStyle.css">
+    <script type="module" src="/getJS"></script>
     <title>App</title>
 </head>
+
 <body>
-    <h1>Connect Four</h1>
-    <h2 id = "id">ID:</h2>
-    <input id="idText"type="text" maxlength="4" placeholder="Join a game with an ID">
-    <button id="buttonConnect">connect</button>
-    <div id = "gameBoard">
+    <h1 id="title">Connect Four</h1>
+    <div id="flexContainer">
+        <div id="leftBox">
+            <div id="gameBoard">
+
+            </div>
+            <div id="content">
+                <p>Red Player's Turn</p>
+            </div>
+
+        </div>
+        <div id="rigthBox">
+            <div id="idBox">
+                <h2 id="code">Game Code:</h2>
+                <h2 id="id"></h2>
+            </div>
+            <div id="connectGame">
+                <input id="idText" type="text" maxlength="4" placeholder="Join a game with an ID">
+                <button id="buttonConnect">connect</button>
+                <button id="buttonReset">Reset Game</button>
+            </div>
+        </div>
+
+
 
     </div>
-    <div id = "content">
-        <p>Red Player's Turn</p>
-    </div>
+
 </body>
+
 </html>
