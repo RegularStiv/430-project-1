@@ -161,28 +161,6 @@ const handleResponse = async (response, parseResponse) => {
     //Grab the content section
     const content = document.querySelector('#content');
 
-    //Based on the status code, display something
-    switch (response.status) {
-        case 200: //success
-            content.innerHTML = '<b>Success</b>';
-            break;
-        case 201: //created
-            content.innerHTML = '<b>Created</b>';
-            break;
-        case 204: //updated (no response back from server)
-            content.innerHTML = '<b>Updated (No Content)</b>';
-            return;
-        case 400: //bad request
-            content.innerHTML = `<b>Bad Request</b>`;
-            break;
-        case 404: //bad request
-            content.innerHTML = `<b>Not Found</b>`;
-            break;
-        default: //any other status code
-            content.innerHTML = `Error code not implemented by client.`;
-            break;
-    }
-
     // when posting the board the id is taken back as well and posted for the player to see
     if (parseResponse === 'POST') {
         let obj = await response.json();
@@ -211,7 +189,9 @@ const handleResponse = async (response, parseResponse) => {
             }
 
             //update the tiles and whos turn it is
-            content.innerHTML = `<b>It is the ${playerStatus}'s turn</b>`;
+            if(content.textContent !== `It is the ${playerStatus}'s turn`){
+                content.innerHTML = `<b>It is the ${playerStatus}'s turn</b>`
+            }
             drawTiles();
         }
         //if the id doenst exist create a new lobby
@@ -251,6 +231,14 @@ const requestUpdate = async () => {
     handleResponse(response, 'GET');
 };
 const sendPost = async () => {
+    //sets the player box
+    if(!redPlayer && !firstGame){
+        document.querySelector("#playerBox").textContent = 'You Are The Red Player';
+    }
+    else if(redPlayer&& !firstGame){
+        document.querySelector("#playerBox").textContent = 'You Are The Yellow Player';
+    }
+
     //set to not the first game
     if (firstGame) {
         firstGame = false;
@@ -263,7 +251,7 @@ const sendPost = async () => {
         player: redPlayer,
         id: id
     }
-
+    
     //call change board and create the response
     let response = await fetch('/changeBoard', {
         method: 'POST',
