@@ -6,10 +6,12 @@ let redPlayer = true;
 let tryID = '';
 let firstGame = true;
 let id = '';
+let gameRunning = true;
 
 //reset the game to nothing
 function resetGame() {
     gameArray = [];
+    gameRunning = true;
     for (let i = 0; i < 6; i++) {
         let rows = []
         for (let j = 0; j < 7; j++) {
@@ -31,6 +33,7 @@ function resetGame() {
 }
 //place tiles down and update the board array
 function setTile() {
+    if(gameRunning){
     //only allows the player to place tiles if they didn't go last
     if (prevArray.toString() != gameArray.toString()) {
         //gets the id
@@ -74,6 +77,7 @@ function setTile() {
         }
     }
 }
+}
 
 //drawing tiles on screen
 function drawTiles() {
@@ -106,7 +110,7 @@ function checkWin() {
                     && gameArray[i][j] === gameArray[i][j + 1]
                     && gameArray[i][j] === gameArray[i][j + 2]
                     && gameArray[i][j] === gameArray[i][j + 3]) {
-                    resetGame();
+                    gameRunning = false;
                     return;
                 }
             }
@@ -117,7 +121,7 @@ function checkWin() {
                     && gameArray[i][j] === gameArray[i + 1][j]
                     && gameArray[i][j] === gameArray[i + 2][j]
                     && gameArray[i][j] === gameArray[i + 3][j]) {
-                    resetGame();
+                        gameRunning = false;
                     return;
                 }
             }
@@ -128,7 +132,7 @@ function checkWin() {
                     && gameArray[i][j] === gameArray[i - 1][j + 1]
                     && gameArray[i][j] === gameArray[i - 2][j + 2]
                     && gameArray[i][j] === gameArray[i - 3][j + 3]) {
-                    resetGame();
+                        gameRunning = false;
                     return;
                 }
             }
@@ -139,17 +143,23 @@ function checkWin() {
                     && gameArray[i][j] === gameArray[i - 1][j - 1]
                     && gameArray[i][j] === gameArray[i - 2][j - 2]
                     && gameArray[i][j] === gameArray[i - 3][j - 3]) {
-                    resetGame();
+                        gameRunning = false;
                     return;
                 }
             }
         }
     }
+    if(!gameRunning && redPlayer){
+        document.querySelector("#content").textContent = 'Game Over Yellow Wins'
+    }
+    else if(!gameRunning && !redPlayer){
+        document.querySelector("#content").textContent = 'Game Over Red Wins'
+    }
     //tells the player whos turn it is
-    if (redPlayer) {
+    else if (gameRunning && redPlayer) {
         document.querySelector("#content").innerHTML = `<p>Red Player's Turn</p>`;
     }
-    if (!redPlayer) {
+    else if (gameRunning && !redPlayer) {
         document.querySelector("#content").innerHTML = `<p>Yellow Player's Turn</p>`;
     }
 }
@@ -187,10 +197,22 @@ const handleResponse = async (response, parseResponse) => {
             } else {
                 playerStatus = 'Yellow Player';
             }
-
+            //if game reset make the game run
+            if(obj.body.gameArray.toString() === '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'){
+                gameRunning = true;
+                console.log('true changed');
+            }
             //update the tiles and whos turn it is
-            if(content.textContent !== `It is the ${playerStatus}'s turn`){
+            if(content.textContent !== `It is the ${playerStatus}'s turn` && obj.body.running){
                 content.innerHTML = `<b>It is the ${playerStatus}'s turn</b>`
+            }
+            else if(!obj.body.running && redPlayer && 
+                content.textContent != 'Game Over Yellow Wins'){
+                content.textContent = 'Game Over Yellow Wins';
+            }
+            else if(!obj.body.running && !redPlayer && 
+                content.textContent != 'Game Over Red Wins'){
+                content.textContent = 'Game Over Red Wins';
             }
             drawTiles();
         }
@@ -235,7 +257,7 @@ const sendPost = async () => {
     if(!redPlayer && !firstGame){
         document.querySelector("#playerBox").textContent = 'You Are The Red Player';
     }
-    else if(redPlayer&& !firstGame){
+    else if(redPlayer && !firstGame){
         document.querySelector("#playerBox").textContent = 'You Are The Yellow Player';
     }
 
@@ -249,7 +271,8 @@ const sendPost = async () => {
     const board = {
         board: gameArray,
         player: redPlayer,
-        id: id
+        id: id,
+        running: gameRunning
     }
     
     //call change board and create the response
